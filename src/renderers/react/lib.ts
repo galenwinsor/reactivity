@@ -1,11 +1,12 @@
 type Props<P = unknown> = P & {
-  children?: (string | ReactElement)[];
   onclick?: () => void;
 };
 
 type ReactElement<P = unknown> = {
   type: keyof HTMLElementTagNameMap;
+  ref?: HTMLElement;
   props: Props<P>;
+  children?: (string | ReactElement)[];
 };
 
 export function createElement<P = unknown>(
@@ -15,28 +16,54 @@ export function createElement<P = unknown>(
 ): ReactElement {
   return {
     type,
-    props: { children, ...props },
+    props,
+    children,
   };
 }
 
-function renderElement(parent: HTMLElement, { type, props }: ReactElement) {
-  const newElement = document.createElement(type);
+function renderElement(
+  parent: HTMLElement,
+  { type, children, props }: ReactElement
+) {
+  const currentRenderIndex = renderIndex;
+  renderIndex++;
+  if (!refs[currentRenderIndex]) {
+    console.log("Appending");
+    const newElement = document.createElement(type);
+    refs.push(newElement);
+    parent.appendChild(newElement);
+  }
+  let element = refs[currentRenderIndex];
   for (const [prop, value] of Object.entries(props)) {
     if (prop === "children") {
       continue;
     } else if (prop === "onclick" && props.onclick) {
-      newElement.addEventListener("click", props.onclick);
+      // Not sure how to avoid adding two click listeners.
+      element.remove();
+      element = refs[currentRenderIndex] = document.createElement(type);
+      element.addEventListener("click", props.onclick);
+      parent.appendChild(element);
     } else if (typeof value === "string") {
-      newElement.setAttribute(prop, value);
+      if (element.getAttribute(prop) === value) {
+        continue;
+      }
+      element.setAttribute(prop, value);
     }
   }
-  parent.appendChild(newElement);
-  if (props.children) {
-    for (const child of props.children) {
+  if (children) {
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      const childNode = element.childNodes[i];
       if (typeof child === "string") {
-        newElement.appendChild(document.createTextNode(child));
+        if (!childNode) {
+          element.appendChild(document.createTextNode(child));
+        } else if (childNode.nodeType !== 3) {
+          throw new Error("Not a text node");
+        } else if (childNode.textContent !== child) {
+          childNode.textContent = child;
+        }
       } else {
-        renderElement(newElement, child);
+        renderElement(element, child);
       }
     }
   }
@@ -48,6 +75,9 @@ let stateIndex = 0;
 let root: HTMLElement;
 let render: () => ReactElement;
 
+let refs: HTMLElement[] = [];
+let renderIndex = 0;
+
 export function createRoot(
   newRoot: HTMLElement,
   renderTree: () => ReactElement
@@ -58,7 +88,8 @@ export function createRoot(
 }
 
 export function rerender() {
-  root.innerHTML = "";
+  console.log("Rerendering!");
+  renderIndex = 0;
   renderElement(root, render());
 }
 
@@ -69,7 +100,7 @@ function updateState(newValue: string, currentIndex: number) {
 }
 
 export function useState(initialValue: string) {
-  console.log("Using state", root);
+  console.log("Using state");
   const currentIndex = stateIndex;
 
   if (state.length <= currentIndex) {
