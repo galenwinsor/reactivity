@@ -28,7 +28,6 @@ function renderElement(
   const currentRenderIndex = renderIndex;
   renderIndex++;
   if (!refs[currentRenderIndex]) {
-    console.log("Appending");
     const newElement = document.createElement(type);
     refs.push(newElement);
     parent.appendChild(newElement);
@@ -39,10 +38,10 @@ function renderElement(
       continue;
     } else if (prop === "onclick" && props.onclick) {
       // Not sure how to avoid adding two click listeners.
-      element.remove();
+      const oldElement = element;
       element = refs[currentRenderIndex] = document.createElement(type);
       element.addEventListener("click", props.onclick);
-      parent.appendChild(element);
+      oldElement.replaceWith(element);
     } else if (typeof value === "string") {
       if (element.getAttribute(prop) === value) {
         continue;
@@ -53,8 +52,8 @@ function renderElement(
   if (children) {
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
-      const childNode = element.childNodes[i];
       if (typeof child === "string") {
+        const childNode = element.childNodes[i];
         if (!childNode) {
           element.appendChild(document.createTextNode(child));
         } else if (childNode.nodeType !== 3) {
@@ -88,7 +87,6 @@ export function createRoot(
 }
 
 export function rerender() {
-  console.log("Rerendering!");
   renderIndex = 0;
   renderElement(root, render());
 }
@@ -100,7 +98,6 @@ function updateState(newValue: string, currentIndex: number) {
 }
 
 export function useState(initialValue: string) {
-  console.log("Using state");
   const currentIndex = stateIndex;
 
   if (state.length <= currentIndex) {
