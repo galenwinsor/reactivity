@@ -11,9 +11,12 @@ function Counter() {
     ]),
     createElement(
       "button",
-      { onclick: () => setCount(`${Number(count) + 1}`) },
+      {
+        onclick: () => setCount(`${Number(count) + 1}`),
+      },
       ["Increment"]
     ),
+    Number(count) < 20 ? null : createElement("p", {}, ["Really big!!"]),
   ]);
 }
 
