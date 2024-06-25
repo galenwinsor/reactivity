@@ -1,5 +1,5 @@
 export default function render() {
-  document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
+  document.querySelector<HTMLDivElement>("#app")!.innerHTML = /* html */ `
   <div>
     <h1>Reactivity Experiment</h1>
     <h2>Naive approach</h2>

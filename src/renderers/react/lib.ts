@@ -1,29 +1,8 @@
-type Props<P = unknown> = P & {
-  onclick?: () => void;
-};
-
-type ReactElement<P = unknown> = {
-  type: keyof HTMLElementTagNameMap;
-  ref?: HTMLElement;
-  props: Props<P>;
-  children?: (string | ReactElement)[];
-};
-
-export function createElement<P = unknown>(
-  type: keyof HTMLElementTagNameMap,
-  props: Props<P>,
-  children?: (string | ReactElement)[]
-): ReactElement {
-  return {
-    type,
-    props,
-    children,
-  };
-}
+import { DOMElement } from "../html/lib";
 
 function renderElement(
   parent: HTMLElement,
-  { type, children, props }: ReactElement
+  { type, children, props }: DOMElement
 ) {
   const currentRenderIndex = renderIndex;
   renderIndex++;
@@ -72,15 +51,12 @@ let state: string[] = [];
 let stateIndex = 0;
 
 let root: HTMLElement;
-let render: () => ReactElement;
+let render: () => DOMElement;
 
 let refs: HTMLElement[] = [];
 let renderIndex = 0;
 
-export function createRoot(
-  newRoot: HTMLElement,
-  renderTree: () => ReactElement
-) {
+export function createRoot(newRoot: HTMLElement, renderTree: () => DOMElement) {
   root = newRoot;
   render = renderTree;
   renderElement(root, render());

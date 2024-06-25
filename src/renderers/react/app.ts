@@ -1,4 +1,5 @@
-import { createElement, createRoot, useState } from "./lib";
+import { createElement } from "../html/lib";
+import { createRoot, useState } from "./lib";
 
 function Counter() {
   const [count, setCount] = useState("0");
