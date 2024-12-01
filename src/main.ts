@@ -4,7 +4,7 @@ import signalsRender from "./renderers/signals/app";
 import reactRender from "./renderers/react/app";
 import observablesRender from "./renderers/observables/app";
 
-naiveRender();
+// naiveRender();
 // reactRender();
 // signalsRender();
-// observablesRender();
+observablesRender();
