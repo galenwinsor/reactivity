@@ -57,7 +57,7 @@ function renderElement(
  * An array of state values; you can think of this as an object mapping state variable ID to value,
  * where the ID is the index in the array.
  */
-let state: string[] = [];
+let state: unknown[] = [];
 /** The index of the state variable that's being resolved. */
 let stateIndex = 0;
 
@@ -96,7 +96,7 @@ export function rerender() {
  * @param newValue The new state value.
  * @param currentIndex The index in the state array of the state variable to update.
  */
-function updateState(newValue: string, currentIndex: number) {
+function updateState<T>(newValue: T, currentIndex: number) {
   state[currentIndex] = newValue;
   stateIndex = 0;
   rerender();
@@ -108,7 +108,7 @@ function updateState(newValue: string, currentIndex: number) {
  * @returns An array: the first item is the current value and the second is a function to update the
  * value.
  */
-export function useState(initialValue: string) {
+export function useState<T>(initialValue: T) {
   const currentIndex = stateIndex;
 
   if (state.length <= currentIndex) {
@@ -119,7 +119,7 @@ export function useState(initialValue: string) {
   stateIndex++;
 
   return [
-    value,
-    (newValue: string) => updateState(newValue, currentIndex),
+    value as T,
+    (newValue: T) => updateState(newValue, currentIndex),
   ] as const;
 }

@@ -2,27 +2,23 @@ import { createElement } from "../html/lib";
 import { createRoot, useState } from "./lib";
 
 function Counter() {
-  const [count, setCount] = useState("0");
+  const [count, setCount] = useState(0);
 
   return createElement("div", {}, [
     createElement("p", {}, ["Count: ", count + " "]),
-    createElement(
-      "button",
-      { onclick: () => setCount(`${Number(count) + 1}`) },
-      ["Increment"]
-    ),
+    createElement("button", { onclick: () => setCount(count + 1) }, [
+      "Increment",
+    ]),
     OnOff(),
   ]);
 }
 
 function OnOff() {
-  const [on, setOn] = useState("");
+  const [on, setOn] = useState(false);
 
   return createElement("div", {}, [
-    createElement("p", {}, [Boolean(on) ? "On" : "Off"]),
-    createElement("button", { onclick: () => setOn(on === "" ? "on" : "") }, [
-      "Toggle",
-    ]),
+    createElement("p", {}, [on ? "On" : "Off"]),
+    createElement("button", { onclick: () => setOn(!on) }, ["Toggle"]),
   ]);
 }
 

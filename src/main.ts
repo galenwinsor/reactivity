@@ -5,6 +5,6 @@ import reactRender from "./renderers/react/app";
 import observablesRender from "./renderers/observables/app";
 
 // naiveRender();
-// reactRender();
+reactRender();
 // signalsRender();
-observablesRender();
+// observablesRender();
