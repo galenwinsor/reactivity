@@ -12,17 +12,25 @@ function renderElement(
 ) {
   const currentRenderIndex = renderIndex;
   renderIndex++;
+
+  // Check if a ref exists for the current element.
   if (!refs[currentRenderIndex]) {
     const newElement = document.createElement(type);
     refs.push(newElement);
     parent.appendChild(newElement);
   }
+  // Get the ref from the ref array.
   let element = refs[currentRenderIndex];
+  // Loop over props to to check if any values have changed since the last
+  // render.
   for (const [prop, value] of Object.entries(props)) {
     if (prop === "children") {
       continue;
+      // For now, just handle onclick listeners.
     } else if (prop === "onclick" && props.onclick) {
       // TODO: Not sure how to avoid adding two click listeners.
+      // So we replace the element, which will make this repaint every
+      // time a state variable changes.
       const oldElement = element;
       element = refs[currentRenderIndex] = document.createElement(type);
       element.addEventListener("click", props.onclick);
